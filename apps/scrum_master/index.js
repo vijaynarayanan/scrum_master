@@ -57,11 +57,11 @@ function getContext(req){
 }
 
 app.launch(function(req,res) {
-  res.say('Hello everyone, good evening.').reprompt('Please let me know the team name for this meeting.').shouldEndSession(false);
+  res.say('Hello everyone, good evening. Please let me know the team name for this meeting.').shouldEndSession(false);
 });
 
 app.intent('getTeamName', {
-        'slots': {'TeamName': 'AMAZON.LITERAL'},
+        'slots': {'TeamName': 'AMAZON.FirstName'},
         'utterances': ['Team name is {-|TeamName}',
                        'Our team name is {-|TeamName}',
 					   'My team name is {-|TeamName}'
@@ -71,7 +71,7 @@ app.intent('getTeamName', {
 	  
 	  if (teamname) {
 		
-        message = "Let me get the details from the Jira server for the team " + teamname + ".";
+        message = "Let me get the details from the Jira server for the team " + teamname + ". ";
 		// Jira has to be there, otherwise the code wont work
 		jira = getJiraDetails();
 		res.session('jira', jira);
