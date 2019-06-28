@@ -8,7 +8,7 @@ var deasync = require('deasync');
 // Define an alexa-app
 var app = new alexa.app('scrum_master');
 //var app = chatskills.app('books');
-var developerNames = [ 'Nandita', 'Nazeer', 'Vijay', 'Tao', 'Anshul', 'Jishu' ];
+var developerNames = [ 'Nandita', 'Nazeer', 'Vijay', 'Tao', 'Anshul', 'Harry' ];
 
 function getJiraDetails() {
 	var jira = null;
@@ -169,7 +169,7 @@ app.intent('blocked', {
 			}
 		}
 		 if(devFound == false){
-			 message = "Ok noted! Who do you think help you in this?";
+			 message = "Ok noted! Who do you think can help you in this?";
 		 }
 
       res.say(message).shouldEndSession(false);
