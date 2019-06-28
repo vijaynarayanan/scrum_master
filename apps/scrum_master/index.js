@@ -193,7 +193,7 @@ app.intent('canHelp', {
 		
 		if(jira){
 			if(context && context.jiraid){
-				message = " Lets move on to the next Jira."+context.developer ;
+				message = " Lets move on to the next Jira." + context.developer ". ";
 				console.log("Jira ID: ")+context.jiraid;
 				message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
 				res.say(message).shouldEndSession(false);
