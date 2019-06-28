@@ -115,7 +115,7 @@ app.intent('getStatus', {
 					   ]
     }, function(req,res) {
 	  var percent = req.slot('percent');
-	  
+	  var endSession = false;
 	  if (percent) {
 		console.log(percent);
         message = "That's amazing! ";
@@ -132,15 +132,19 @@ app.intent('getStatus', {
 			}
 			else{
 				message = "We have reached the end of the meeting. Have a nice day." ;
-				res.say(message).shouldEndSession(true);
+				endSession = true;
 			}
 		}
       }
       else {
         message = 'Sorry, could not understand your response. Can you please let me know how much have you completed?';
       }
-
-      res.say(message).shouldEndSession(false);
+		if(endSession == false){
+			res.say(message).shouldEndSession(false);
+		}
+		else{
+			res.say(message).shouldEndSession(true);
+		}
     }
 );
 
