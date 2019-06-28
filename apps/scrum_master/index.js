@@ -105,7 +105,7 @@ var transporter = nodemailer.createTransport({
 
 var mailOptions = {
   from: 'hussain.kizhakkedathu@gmail.com',
-  to: 'nanditakommana@gmail.com',
+  to: 'nanditakommana@gmail.com,vijay.narayanan25@gmail.com,jishuthomas@gmail.com',
   subject: getTodayDate()+' : Scrum Summary for '+teamname,
   html: createEmailBody(details)
 };
