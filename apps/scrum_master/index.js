@@ -71,7 +71,7 @@ function getContext(req){
 }
 
 app.launch(function(req,res) {
-  res.say('Hello everyone, good evening. Please let me know the team name for this meeting.').shouldEndSession(false);
+  res.say('Hello everyone, good evening. Welcome to UBS Scrum daily stand up meeting. Let us start by going through the progress of each Jira item. Please let me know the team name for this meeting.').shouldEndSession(false);
 });
 
 app.intent('getTeamName', {
