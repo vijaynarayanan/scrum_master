@@ -238,7 +238,7 @@ app.intent('getStatus', {
 				setConversationDetails(context.jiraid ,context.developer,"percentage",percent);
 			}
 			else{
-				message = "We have reached the end of the meeting. Have a nice day." ;
+				message = "We have reached the end of the meeting. Have a nice day. Will send you the mail with the minutes of the meeting." ;
 				sendEmail(jira);
 				endSession = true;
 			}
@@ -335,7 +335,7 @@ app.intent('canHelp', {
 				message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
 				res.say(message).shouldEndSession(false);
 			}else{
-				message = "We have reached the end of the meeting. Have a nice day." ;
+				message = "We have reached the end of the meeting. Have a nice day. Will send you the mail with the minutes of the meeting." ;
 				sendEmail(jira);
 				res.say(message).shouldEndSession(true);
 			}
@@ -362,7 +362,7 @@ app.intent('cannotHelp', {
 				message = "Lets move on to the next Jira which is assigned to " + context.developer +". What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
 				res.say(message).shouldEndSession(false);
 			}else{
-				message = "We have reached the end of the meeting. Have a nice day." ;
+				message = "We have reached the end of the meeting. Have a nice day. Will send you the mail with the minutes of the meeting." ;
 				sendEmail(jira);
 				res.say(message).shouldEndSession(true);
 			}
