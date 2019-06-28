@@ -30,6 +30,9 @@
     "request": "*",
     "deasync": "*"
   },
+  "scripts": {
+   "start": "node app"
+   },
   "devDependencies": {
     "chai": "^3.5.0",
     "coveralls": "^2.11.15",
