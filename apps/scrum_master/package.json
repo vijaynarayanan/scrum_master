@@ -1,0 +1,13 @@
+{
+  "name": "scrum_master",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "alexa-app": "^3.2.0",
+    "xml2js": "*",
+    "request": "*",
+    "deasync": "*",
+    "chatskills": "*",
+    "readline-sync": "*"
+  }
+}
