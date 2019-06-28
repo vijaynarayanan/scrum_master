@@ -176,6 +176,64 @@ app.intent('blocked', {
     }
 );
 
+app.intent('canHelp', {
+        'slots': {},
+		'utterances': [
+						'{Yes|Yeah|Sure|Ok|} {I|} {can|will} {help}',
+						'{I|} {can|will} {try to|} {help}',
+						'{Yes|Yeah|Sure|Ok}'
+					   ]
+    }, function(req,res) {
+		var message="That is great. Thank you. "
+		res.say(message).shouldEndSession(false);
+		jira = req.session('jira');
+		var context = getContext(req);
+		res.session('context', context);
+		var jiraInstance = getJiraInstance(req);
+		
+		if(jira){
+			if(context && context.jiraid){
+				message = " Lets move on to the next Jira."+context.developer ;
+				console.log("Jira ID: ")+context.jiraid;
+				message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+				res.say(message).shouldEndSession(false);
+			}else{
+				message = "We have reached the end of the meeting. Have a nice day." ;
+				res.say(message).shouldEndSession(true);
+			}
+		}
+    }
+);
+
+app.intent('cannotHelp', {
+        'slots': {},
+		'utterances': [
+						'{No|Nope} {I|} {cannot} {|help}',
+						'{No|Nope}'
+					   ]
+    }, function(req,res) {
+		var message="Ok. Please take it offline. "
+		res.say(message).shouldEndSession(false);
+		jira = req.session('jira');
+		var context = getContext(req);
+		res.session('context', context);
+		var jiraInstance = getJiraInstance(req);
+		
+		if(jira){
+			if(context && context.jiraid){
+				message = context.developer ;
+				console.log("Jira ID: ")+context.jiraid;
+				message += "Lets move on to the next Jira. What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+				res.say(message).shouldEndSession(false);
+			}else{
+				message = "We have reached the end of the meeting. Have a nice day." ;
+				res.say(message).shouldEndSession(true);
+			}
+		}
+    }
+);
+
+
 module.exports = app;
 /*
 chatskills.launch(app);
