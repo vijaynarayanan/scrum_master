@@ -82,8 +82,8 @@ app.intent('getTeamName', {
 			res.session('context', context);
 			var jiraInstance = getJiraInstance(req);
 			
-			message = "Now I have all the details needed for this meeting. Let us commence the meeting with " + context.developer + ".";
-			message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+			message = "Now I have all the details needed for this meeting. Let us commence the meeting with " + context.developer + ". ";
+			message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ". ";
 		}
       }
       else {
