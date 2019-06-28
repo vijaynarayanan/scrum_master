@@ -1,3 +1,5 @@
+
+var nodemailer = require('nodemailer');
 var alexa = require('alexa-app');
 //var chatskills = require('chatskills');
 //var readlineSync = require('readline-sync');
@@ -11,6 +13,110 @@ var app = new alexa.app('scrum_master');
 //var app = chatskills.app('books');
 var developerNames = [ 'Nandita', 'Nazeer', 'Vijay', 'Tao', 'Anshul', 'Harry' ];
 
+var teamname='';
+var conversationDetails = new Array;
+
+
+function conversationdetail(jiraId,developerName,intent,response){
+ this.jiraId=jiraId;
+ this.developerName=developerName;
+ this.intent=intent;
+ this.response=response;
+ 
+ return this;
+}
+function setConversationDetails(jiraId,developerName,intent,response){
+ var convDetail=new conversationdetail(jiraId,developerName,intent,response);
+ conversationDetails.push(convDetail);
+}
+
+//Email Functionality Start
+
+function getTodayDate(){
+ 
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
+today = mm + '/' + dd + '/' + yyyy;
+console.log(today);
+return today;
+}
+function createEmailBody(details){
+ 
+ 
+var emailbody='<html><head><style>table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}'+
+'td, th { border: 1px solid #dddddd;text-align: left;padding: 8px;}'+'tr:nth-child(even) {background-color: #dddddd;}</style></head><body>'+
+'<h2>Scrum Details</h2><table>';
+  emailbody+='<tr>'+
+    '<td>Jira Id</td>'+
+ '<td>Title</td>'+
+    '<td>Developer</td>'+
+ '<td>Percentage Completed</td>'+
+ '<td>Blockers</td>'+
+ '<td>Comments</td>'+    
+ '</tr>';
+ 
+ for(j = 0;j< details.length ;j++){
+  console.log(j);
+  emailbody+='<tr>'+'<td>'+details[j].id+'</td>'
+  +'<td>'+details[j].developer+'</td>'
+  +'<td>'+details[j].title+'</td>';
+  var percentageCompleted='<td></td>';
+  var blockers='<td></td>';
+  var comments='<td></td>';
+  for(i = 0; i< conversationDetails.length ;i++){
+    if(details[j].id===conversationDetails[i].jiraId){
+      if(conversationDetails[i].intent==="percentage"){
+       percentageCompleted='<td>'+conversationDetails[i].response+'</td>';
+      }
+      if(conversationDetails[i].intent==="blockers"){
+        blockers='<td>'+conversationDetails[i].response+'</td>';
+      }
+        
+      
+      if(conversationDetails[i].intent==="comments"){
+        comments='<td>'+conversationDetails[i].response+'</td>';
+      }
+     
+   
+   
+    }
+  }
+   
+  emailbody+=percentageCompleted+blockers+comments+'</tr>';
+ }
+ 
+ emailbody+='</table></body></html>';
+ 
+ console.log(emailbody);
+ return emailbody;
+ 
+}
+
+function sendEmail(details){
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'hussain.kizhakkedathu@gmail.com',
+    pass: 'wucufzgiqqxiqcjl'
+  }
+});
+
+var mailOptions = {
+  from: 'hussain.kizhakkedathu@gmail.com',
+  to: 'nanditakommana@gmail.com',
+  subject: getTodayDate()+' : Scrum Summary for '+teamname,
+  html: createEmailBody(details)
+};
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
+}
 
 function getExcel(){
 	var xl = XLSX.readFile('JIRA_EXCEL.xlsx');
@@ -81,7 +187,7 @@ app.intent('getTeamName', {
 					   'My team name is {-|TeamName}'
 					   ]
     }, function(req,res) {
-	  var teamname = req.slot('TeamName');
+	  teamname = req.slot('TeamName');
 	  
 	  if (teamname) {
 		
@@ -129,9 +235,11 @@ app.intent('getStatus', {
 			if(context && context.jiraid){
 				message = "What about you " + context.developer + "? ";
 				message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+				setConversationDetails(context.jiraid ,context.developer,"percentage",percent);
 			}
 			else{
 				message = "We have reached the end of the meeting. Have a nice day." ;
+				sendEmail(jira);
 				endSession = true;
 			}
 		}
@@ -163,6 +271,7 @@ app.intent('blocked', {
 					   ]
     }, function(req,res) {
 		var title = req.slot('TitleOne');
+		var devName='';
 		if (title) {
 			var message = '';
 
@@ -185,13 +294,17 @@ app.intent('blocked', {
 		var devFound = false;
 		var context = getContext(req);
 		for(i = 0; i< developerNames.length;i++){
+			devName=developerNames[i];
 			//console.log(title + " : " + developerNames[i]);
 			if(title.includes(developerNames[i].toLowerCase())){
 				message = developerNames[i] + ". Do you think you can help here?";
 				 devFound = true;
+				 devName=developerNames[i];
 				 break;
 			}
 		}
+		setConversationDetails(context.jiraid ,context.developer,"blockers","Yes");
+		setConversationDetails(context.jiraid ,context.developer,"comments","Will reach out to "+devName);
 		 if(devFound == false){
 			 message = "Ok noted! Who do you think can help you in this?";
 		 }
@@ -223,6 +336,7 @@ app.intent('canHelp', {
 				res.say(message).shouldEndSession(false);
 			}else{
 				message = "We have reached the end of the meeting. Have a nice day." ;
+				sendEmail(jira);
 				res.say(message).shouldEndSession(true);
 			}
 		}
@@ -249,6 +363,7 @@ app.intent('cannotHelp', {
 				res.say(message).shouldEndSession(false);
 			}else{
 				message = "We have reached the end of the meeting. Have a nice day." ;
+				sendEmail(jira);
 				res.say(message).shouldEndSession(true);
 			}
 		}
