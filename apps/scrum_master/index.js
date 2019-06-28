@@ -4,16 +4,30 @@ var alexa = require('alexa-app');
 var xml2js = require('xml2js').parseString;
 var request = require('request');
 var deasync = require('deasync');
+var XLSX = require('xlsx');
 
 // Define an alexa-app
 var app = new alexa.app('scrum_master');
 //var app = chatskills.app('books');
 var developerNames = [ 'Nandita', 'Nazeer', 'Vijay', 'Tao', 'Anshul', 'Harry' ];
 
+
+function getExcel(){
+	var xl = XLSX.readFile('JIRA_EXCEL.xlsx');
+	
+	return xl;
+}
+
 function getJiraDetails() {
-	var jira = null;
+	var workbook = getExcel();
+	var sheet_name_list = workbook.SheetNames;
+	var jira = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+	console.log(jira);
+	/*var jira = null;
 	jira = [{ id: 1234, title: 'Alexa skill', totalhours: 6, completed : 1, status : 'In progress' , developer : 'Nandita'},
-			{ id: 1235, title: 'Jira creation', totalhours: 2, completed : 1, status : 'In progress' , developer : 'VJ'}];
+			{ id: 1235, title: 'Jira creation', totalhours: 2, completed : 1, status : 'In progress' , developer : 'VJ'},
+			{ id: 1235, title: 'Jira creation', totalhours: 2, completed : 1, status : 'In progress' , developer : 'Anshul'}
+			];*/
 	return jira;
 }
 
@@ -112,8 +126,14 @@ app.intent('getStatus', {
 		var jiraInstance = getJiraInstance(req);
 		
 		if(jira){
-			message = "What about you " + context.developer + "? ";
-			message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+			if(context && context.jiraid){
+				message = "What about you " + context.developer + "? ";
+				message += "What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+			}
+			else{
+				message = "We have reached the end of the meeting. Have a nice day." ;
+				res.say(message).shouldEndSession(true);
+			}
 		}
       }
       else {
@@ -221,9 +241,7 @@ app.intent('cannotHelp', {
 		
 		if(jira){
 			if(context && context.jiraid){
-				message = context.developer ;
-				console.log("Jira ID: ")+context.jiraid;
-				message += "Lets move on to the next Jira. What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
+				message = "Lets move on to the next Jira which is assigned to " + context.developer +". What is the status of the jira id " + context.jiraid + ", which is " + jiraInstance.title + ".";
 				res.say(message).shouldEndSession(false);
 			}else{
 				message = "We have reached the end of the meeting. Have a nice day." ;

@@ -12,10 +12,7 @@
     "url": "https://github.com/alexa-js/alexa-app-server/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
-    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec",
-    "coverage_local": "istanbul cover node_modules/mocha/bin/_mocha",
-    "danger": "./node_modules/.bin/danger"
+    "start": "node app"
   },
   "license": "MIT",
   "dependencies": {
@@ -28,11 +25,9 @@
     "lodash.defaults": "^4.2.0",
     "xml2js": "*",
     "request": "*",
-    "deasync": "*"
+    "deasync": "*",
+    "xlsx": "*"
   },
-  "scripts": {
-   "start": "node app"
-   },
   "devDependencies": {
     "chai": "^3.5.0",
     "coveralls": "^2.11.15",
